@@ -2,10 +2,43 @@
     ViewData["Title"] = "Home Page";
      Layout = "Layout/_LayoutBase";
 }
+
+
 <link rel="stylesheet" href="~/css/pizzaIndex.css" asp-append-version="true" />
 
 <div class="text-center  ms-jumbo  ">
     <h1 class="display-4">Welcome</h1>
+        <h1 class="col-12">Visualizzazione Pizze JSON</h1>
+    <div class="containerJson row  mb-5 g-4 ">
+    </div>
    
   
 </div>
+<script type="text/javascript" language="javascript">
+    //function loadList() {
+        axios.get('/api/pizzas').then((response) => {
+            console.log(response);
+            if (response.status == 200) {
+                response.data.forEach(pizza => {
+                    //console.log('pizza', pizza);
+                    document.querySelector('.containerJson').innerHTML +=
+                       `
+                        <div class="col-12 col-sm-6 col-xl-4">
+                            <div class="card ms-height">
+                                <img class="card-img-top" src="${pizza.img}" alt="Card image cap">
+                                <div class="card-body">
+                                    <h5 class="card-title">${pizza.name}</h5>
+                                    <p class="card-text">${pizza.description}</p>
+                                    <p class="card-text">Prezzo:${pizza.price} €</p>
+                                </div>
+                            </div>
+                        </div>
+                        `;
+                });
+               
+            }
+        }).catch(e => {
+            console.log(e);
+        });
+    //}
+</script>
