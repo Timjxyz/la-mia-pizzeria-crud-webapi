@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
+namespace la_mia_pizzeria_static.Models
+{
     public class Ingredient
     {
         public Ingredient()
@@ -14,5 +15,9 @@ using System.ComponentModel.DataAnnotations.Schema;
         public string Name { get; set; }
         public List<Pizza> Pizzas { get; set; }
 
+
     }
+}
+       
+
 

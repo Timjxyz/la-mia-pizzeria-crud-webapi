@@ -25,28 +25,43 @@
     <div class="row  mb-5 g-4 ">
         @foreach (Pizza pizza in Model)
         {
-            <div class="col-12 col-sm-6 col-xl-4">
+            @if(@Model.Count() == 0)
+            {
+                <h2>
+                    Non ci sono pizze nell'elenco'
+                </h2>
+            }
+            else
+            {
+                <div class="col-12 col-sm-6 col-xl-4">
 
-                <div class="card ms-height">
-                      <img class="card-img-top" src="@pizza.Img" alt="Card image cap">
-                      <div class="card-body">
-                            <h5 class="card-title">@pizza.Name</h5>
-                            <p class="card-text">@pizza.Description</p>
-                            <p class="card-text">@pizza.Category.Name</p>
-                            <p class="card-text">Prezzo: @pizza.Price €</p>
-                            <div class="d-flex justify-content-around">
-                                <a href="@Url.Action("Update","Pizza", new {id=pizza.PizzaId})" class="btn btn-warning">Modifica</a>
-                                <a href="@Url.Action("Details","Pizza", new {id=pizza.PizzaId})" class="btn btn-info">Dettagli</a>
-                                <form asp-controller="Pizza" asp-action="Delete" asp-route-id="@pizza.PizzaId" method="post">
-                                        @Html.AntiForgeryToken()
-                                        <button type="submit"  class="btn btn-danger" >Elimina</button>
-                                </form>
 
+                    <div class="card ms-height">
+                            <img class="card-img-top" src="@pizza.Img" alt="Card image cap">
+                            <div class="card-body">
+                                <h5 class="card-title">@pizza.Name</h5>
+                                <p class="card-text">@pizza.Description</p>
+                                <p class="card-text">@pizza.Category.Name</p>
+                                @foreach(Ingredient ingredient in pizza.Ingredients){
+                                    <p class="card-text">Ingredienti: @ingredient.Name</p>       
+                                }
+                                <p class="card-text">Prezzo: @pizza.Price €</p>
+                          
+                        
+                                <div class="d-flex justify-content-around">
+                                    <a href="@Url.Action("Update","Pizza", new {id=pizza.PizzaId})" class="btn btn-warning">Modifica</a>
+                                    <a href="@Url.Action("Details","Pizza", new {id=pizza.PizzaId})" class="btn btn-info">Dettagli</a>
+                                    <form asp-controller="Pizza" asp-action="Delete" asp-route-id="@pizza.PizzaId" method="post">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit"  class="btn btn-danger" >Elimina</button>
+                                    </form>
+
+                                </div>
                             </div>
-                      </div>
-                </div>
+                    </div>
 
-            </div>
+                </div>
+            }
         }
     </div>
      
