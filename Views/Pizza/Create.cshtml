@@ -1,0 +1,86 @@
+﻿@{
+    Layout = "Layout/_LayoutSenzaFooter";
+}
+@{
+    ViewData["Title"] = "Inserisci una nuova pizza";
+}
+
+@model PizzaCategories
+
+
+<link rel="stylesheet" href="~/css/pizzaIndex.css" asp-append-version="true" />
+
+<div class="container w-50">
+    <div class="row justify-content-center">
+        <div class="col-12">
+
+            <h1>Inserisci una nuova pizza</h1>
+
+            <form asp-controller="Pizza" asp-action="Create" method="post" >
+
+                @Html.AntiForgeryToken()
+                
+                <div class="form-group">
+                    <label asp-for="Pizza.Name" class="control-label text-white"></label>
+                    <input asp-for="Pizza.Name" placeholder="es. Margherita" class="form-control" />
+                    <span asp-validation-for="Pizza.Name" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Pizza.Description" class="control-label text-white"></label>
+                    <input asp-for="Pizza.Description"placeholder="es. Pomodoro, Mozzarella" class="form-control" />
+                    <span asp-validation-for="Pizza.Description" class="text-danger"></span>
+                </div>
+
+                 <div class="form-group">
+                    <label asp-for="Pizza.Img" class="control-label text-white"></label>
+                    <input asp-for="Pizza.Img" placeholder="es. /img/pizza-margherita.jpg" class="form-control" />
+                    <span asp-validation-for="Pizza.Img" class="text-danger"></span>
+                </div>
+
+                 <div class="form-group">
+                    <label asp-for="Pizza.Price" class="control-label text-white"></label>
+                    <input asp-for="Pizza.Price" placeholder="es. 10" class="form-control" />
+                    <span asp-validation-for="Pizza.Price" class="text-danger"></span>
+                </div>
+
+                 <div >
+                    
+                     <label asp-for="Pizza.CategoryId" class="control-label text-white">Category</label>
+                     <select asp-for="Pizza.CategoryId" class=" form-select">
+                         <option value=""></option>
+                        @foreach(Category category in Model.Categories)
+                        {
+                            @if(Model.Pizza.CategoryId== category.Id)
+                            {
+                                <option value="@category.Id" selected>@category.Name</option>
+                               
+                            }else
+                            {
+                                 <option value="@category.Id">@category.Name</option>
+                            }
+                        }
+
+                     </select>
+
+                 </div>
+                 <div>
+                      <strong>Ingredients:</strong>
+                      <select 
+
+                          asp-for="SelectedIngredients" 
+                          multiple="multiple" 
+                          size="10" 
+                          class="form-control leftList" 
+                          asp-items="@Model.Ingredients">
+                      </select>
+                 </div>
+
+                  <div class="text-end">
+                    <input type="submit"  class="btn px-4 btn-success mt-4" value="Save"/>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
