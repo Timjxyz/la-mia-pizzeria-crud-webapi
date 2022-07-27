@@ -8,7 +8,7 @@ public class Pizza
 {
     [Key]
     public int PizzaId { get; set; }
-    [StringLength(50, ErrorMessage = "Il numero massimo di caratteri inseribili è 50 caratteri")]
+    
     [Required(ErrorMessage = "Il campo è obbligatorio")]
     public string Name { get; set; }
     [ValidatorPizzaForm]

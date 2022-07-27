@@ -42,9 +42,10 @@
                                 <h5 class="card-title">@pizza.Name</h5>
                                 <p class="card-text">@pizza.Description</p>
                                 <p class="card-text">@pizza.Category.Name</p>
+                                <p class="card-text">Ingredienti:
                                 @foreach(Ingredient ingredient in pizza.Ingredients){
-                                    <p class="card-text">Ingredienti: @ingredient.Name</p>       
-                                }
+                                     <span>@ingredient.Name,</span>                                }
+                                </p> 
                                 <p class="card-text">Prezzo: @pizza.Price €</p>
                           
                         

@@ -20,7 +20,7 @@ namespace la_mia_pizzeria_static.Controllers
         {
             using(PizzaContext context = new PizzaContext())
             {
-                IQueryable<Pizza> pizzas = context.Pizzas.Include(p=>p.Category).Include(pizza => pizza.Ingredients);
+                IQueryable<Pizza> pizzas = context.Pizzas.Include(p=>p.Category).Include(p => p.Ingredients);
                 return View("Index",pizzas.ToList());
 
             }
@@ -50,20 +50,14 @@ namespace la_mia_pizzeria_static.Controllers
             {
                 List<Category> categories = context.Categories.ToList();
 
-                List<Ingredient> ingredients = context.Ingredients.ToList();
 
                 PizzaCategories model =new PizzaCategories();
                
 
-                List<SelectListItem> listIngredients = new List<SelectListItem>();
-
-                foreach(Ingredient ingredient in ingredients)
-                {
-                    listIngredients.Add(new SelectListItem(){Text= ingredient.Name, Value= ingredient.IngredientId.ToString()});
-                }
+                
                 model.Categories = categories;
                 model.Pizza = new Pizza();
-                model.Ingredients = listIngredients;
+                model.Ingredients = RetriveTagListItem();
                 return View("Create",model);
             }
         }
@@ -72,29 +66,48 @@ namespace la_mia_pizzeria_static.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(PizzaCategories formData)
+        public IActionResult Create(PizzaCategories data)
         {
-            using(PizzaContext context = new PizzaContext())
+            if (!ModelState.IsValid)
             {
-                if (!ModelState.IsValid)
+                using (PizzaContext context = new PizzaContext())
                 {
-                   formData.Categories = context.Categories.ToList();
-                    formData.Ingredients = new List<SelectListItem>();
-                    List<Ingredient> ingredients = new PizzaContext().Ingredients.ToList();
-                    foreach (Ingredient ingredient in ingredients)
-                    {
-                        formData.Ingredients.Add(new SelectListItem() { Text = ingredient.Name, Value = ingredient.IngredientId.ToString() });
-                    }
+                    List<Category> categories = context.Categories.ToList();
+                    data.Categories = categories;
+                    data.Ingredients = RetriveTagListItem();
+                    return View("Create",data);
+                    
 
-                    return View(formData);
                 }
-                context.Pizzas.Add(formData.Pizza);
-                context.SaveChanges();
+            }
 
+            using (PizzaContext context = new PizzaContext())
+            {
+                Pizza pizzaToCreate = new Pizza();
+                pizzaToCreate.Name=data.Pizza.Name;
+                pizzaToCreate.Img=data.Pizza.Img;
+                pizzaToCreate.Description=data.Pizza.Description;   
+                pizzaToCreate.CategoryId=data.Pizza.CategoryId; 
+                pizzaToCreate.Ingredients=new List<Ingredient>();
+
+                if (data.SelectedIngredients != null)
+                {
+                    foreach(string selectedIngredientId in data.SelectedIngredients)
+                    {
+                        int selectedIntIngredient=int.Parse(selectedIngredientId);
+                        Ingredient ingredient= context.Ingredients.Where(m=>m.Id==selectedIntIngredient).FirstOrDefault();  
+                        pizzaToCreate.Ingredients.Add(ingredient);
+                    }
+                }
+
+                context.Pizzas.Add(pizzaToCreate);
+                context.SaveChanges();
                 return RedirectToAction("Index");
 
+
             }
-         
+
+
 
         }
 
@@ -103,55 +116,90 @@ namespace la_mia_pizzeria_static.Controllers
         {
             using (PizzaContext context = new PizzaContext())
             {
-                Pizza pizza = context.Pizzas.Where(p => p.PizzaId == id).Include(p=>p.Category).FirstOrDefault();
+                Pizza pizzaToEdit = context.Pizzas.Where(p => p.PizzaId == id).Include(p=>p.Category).Include(p => p.Ingredients).FirstOrDefault();
 
-                if (pizza == null)
+                if (pizzaToEdit == null)
                 {
                     return NotFound();
                 }
                 else
                 {
+                    List<Category> categories = context.Categories.ToList();
                     PizzaCategories model = new PizzaCategories();
-                    model.Pizza = pizza;
+                    model.Pizza = pizzaToEdit;
                     model.Categories = context.Categories.ToList();
+                    model.SelectedIngredients = new List<string>();
+
+                    foreach(Ingredient t in pizzaToEdit.Ingredients)
+                    {
+                        model.SelectedIngredients.Add(t.Id.ToString());
+                    }
+
+                    model.Ingredients = RetriveTagListItem();
+
                     return View(model);
                 }
             }
         }
 
+        
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Update(int id, PizzaCategories data)
         {
-            
 
-            using (PizzaContext context = new PizzaContext())
+            if (!ModelState.IsValid)
             {
 
-                if (!ModelState.IsValid)
+
+                using (PizzaContext context = new PizzaContext())
                 {
-                    data.Categories = context.Categories.ToList();
-                    return View(data);
+                    List<Category> categories = context.Categories.ToList();
+                    data.Categories = categories;
+                    data.Ingredients = RetriveTagListItem();
+                    return View("Update", data);
+
+
                 }
 
+            }
+            using (PizzaContext context = new PizzaContext())
+            {
+                Pizza pizzaToEdit = context.Pizzas.Where(p => p.PizzaId == id).Include(p=>p.Ingredients).FirstOrDefault();
+                if(pizzaToEdit!= null)
+                {
+                    pizzaToEdit.Name = data.Pizza.Name;
+                    pizzaToEdit.Img = data.Pizza.Img;
+                    pizzaToEdit.Description = data.Pizza.Description;
+                    pizzaToEdit.Price = data.Pizza.Price;
+                    pizzaToEdit.CategoryId = data.Pizza.CategoryId;
+                    pizzaToEdit.Ingredients.Clear();
 
-                Pizza pizza=context.Pizzas.Where(p => p.PizzaId == id).FirstOrDefault();    
-                if(pizza == null)
+                    if (data.SelectedIngredients != null)
+                    {
+                        foreach (string selectedIngredientId in data.SelectedIngredients)
+                        {
+                            int selectedIntIngredient = int.Parse(selectedIngredientId);
+                            Ingredient ingredient = context.Ingredients.Where(m => m.Id == selectedIntIngredient).FirstOrDefault();
+                            pizzaToEdit.Ingredients.Add(ingredient);
+                        }
+                    }
+
+
+                    context.SaveChanges();
+                    return RedirectToAction("Index");
+
+                }
+                else
                 {
                     return NotFound();
                 }
-
-
-                pizza.Name = data.Pizza.Name;
-                pizza.Img = data.Pizza.Img;
-                pizza.Description= data.Pizza.Description;
-                pizza.Price = data.Pizza.Price;
-                pizza.CategoryId= data.Pizza.CategoryId;
-                context.SaveChanges();
-                return RedirectToAction("Index");
             }
-
+                
         }
+
+        
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -172,6 +220,21 @@ namespace la_mia_pizzeria_static.Controllers
 
             }
 
+        }
+
+        private static List<SelectListItem> RetriveTagListItem()
+        {
+            using (PizzaContext context = new PizzaContext())
+            {
+
+                List<SelectListItem> ingredientList = new List<SelectListItem>();
+                List<Ingredient> ingredients = context.Ingredients.ToList();
+                foreach (Ingredient ingredient in ingredients)
+                {
+                    ingredientList.Add(new SelectListItem() { Text = ingredient.Name, Value = ingredient.Id.ToString() });
+                }
+                return ingredientList;
+            }
         }
 
 

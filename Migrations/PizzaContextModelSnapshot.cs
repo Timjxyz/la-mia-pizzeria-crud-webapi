@@ -21,32 +21,15 @@ namespace la_mia_pizzeria_static.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("Ingredient", b =>
-                {
-                    b.Property<int>("IngredientId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IngredientId"), 1L, 1);
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("IngredientId");
-
-                    b.ToTable("Ingredients");
-                });
-
             modelBuilder.Entity("IngredientPizza", b =>
                 {
-                    b.Property<int>("IngredientsIngredientId")
+                    b.Property<int>("IngredientsId")
                         .HasColumnType("int");
 
                     b.Property<int>("PizzasPizzaId")
                         .HasColumnType("int");
 
-                    b.HasKey("IngredientsIngredientId", "PizzasPizzaId");
+                    b.HasKey("IngredientsId", "PizzasPizzaId");
 
                     b.HasIndex("PizzasPizzaId");
 
@@ -71,6 +54,23 @@ namespace la_mia_pizzeria_static.Migrations
                     b.ToTable("Categories");
                 });
 
+            modelBuilder.Entity("la_mia_pizzeria_static.Models.Ingredient", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Ingredients");
+                });
+
             modelBuilder.Entity("Pizza", b =>
                 {
                     b.Property<int>("PizzaId")
@@ -93,8 +93,7 @@ namespace la_mia_pizzeria_static.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<double>("Price")
                         .HasColumnType("float");
@@ -108,9 +107,9 @@ namespace la_mia_pizzeria_static.Migrations
 
             modelBuilder.Entity("IngredientPizza", b =>
                 {
-                    b.HasOne("Ingredient", null)
+                    b.HasOne("la_mia_pizzeria_static.Models.Ingredient", null)
                         .WithMany()
-                        .HasForeignKey("IngredientsIngredientId")
+                        .HasForeignKey("IngredientsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
