@@ -7,11 +7,36 @@ namespace la_mia_pizzeria_static.Controllers.Api
     [ApiController]
     public class PizzaController : ControllerBase
     {
-        public IActionResult Get()
+        [HttpGet]
+        public IActionResult Get(string? search)
         {
-            PizzaContext pizzaContext = new PizzaContext();
-            IQueryable<Pizza> pizzaList = pizzaContext.Pizzas;
-            return Ok(pizzaList);
+            using(PizzaContext context = new PizzaContext())
+            {
+                IQueryable<Pizza> pizzas = context.Pizzas;
+                if(search != null && search!= "")
+                {
+                    pizzas = pizzas.Where(p => p.Name.Contains(search));
+                }
+                return Ok(pizzas.ToList());
+
+            }
+
         }
+        [HttpGet("{id}")]
+        public IActionResult Get(int id)
+        {
+            using (PizzaContext context = new PizzaContext())
+            {
+                Pizza pizza=context.Pizzas.Where(p => p.PizzaId == id).FirstOrDefault();
+                if (pizza == null)
+                {
+                    return NotFound();  
+                }
+                return Ok(pizza);
+
+            }
+        }
+
+        
     }
 }

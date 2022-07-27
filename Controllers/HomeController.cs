@@ -18,9 +18,9 @@ namespace la_mia_pizzeria_static.Controllers
             return View();
         }
 
-        public IActionResult Privacy()
+        public IActionResult Details(int id)
         {
-            return View();
+            return View(id);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
