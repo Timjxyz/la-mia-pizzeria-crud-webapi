@@ -1,0 +1,118 @@
+﻿@{
+    ViewData["Title"] = "Contact";
+     Layout = "Layout/_LayoutBase";
+}
+<div class="container">
+
+    <div class="text-center">
+        <h1 class="display-4">Benvenuto nella pagina dei contatti</h1>   
+    </div>
+
+    <div class="row d-flex justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">Contattaci</div>
+
+                <div id="registerDiv" class="card-body">
+                    <form onsubmit="sendMessage(event)" >
+                       <!--Inserisci nome -->
+                        <div class="form-group row mb-4">
+                            <label for="name" class="col-md-4 col-form-label text-md-right">Name</label>
+
+                            <div class="col-md-6">
+                                <input required id="name" name="name" placeholder="Inserisci il tuo nome" type="text" class="form-control" autofocus>
+                            </div>
+
+                        </div>
+                        <!--fine inserisci nome-->
+
+                        <!--Inserisci mail-->
+                        <div class="form-group row mb-4">
+                            <label for="email" class="col-md-4 col-form-label text-md-right">Email</label>
+
+                            <div class="col-md-6">
+                                <input required id="email" name="email" placeholder="es. germano@gmail.com" type="email" class="form-control">
+                            </div>
+                        </div>
+                        <!--fine inserisci mail-->
+
+                        <!--Inserisci Titolo -->
+                        <div class="form-group row mb-4">
+                            <label for="title" class="col-md-4 col-form-label text-md-right">Title</label>
+
+                            <div class="col-md-6">
+                                <input required id="title" name="title" placeholder="Inserisci titolo" type="text" class="form-control" autofocus>
+                            </div>
+
+                        </div>
+                        <!--fine inserisci Titolo-->
+
+                        <!--Inserisci Text -->
+                        
+                        <div class="form-group row mb-4">
+                             <label for="text" class="col-md-4 col-form-label text-md-right">Text</label>
+
+                            <div class="col-md-6">
+                                <textarea id="text" rows="4" name="text" cols="50" placeholder="Scrivici quello che pensi"></textarea>
+                            </div>
+                        </div>
+                        <!--fine inserisci Text-->
+
+                        <!--button-->
+                        <div class="form-group row mb-0">
+                            <div class="col-md-6 offset-md-5">
+                                <input type="submit" class="btn btn-primary px-4" value="Invia"/>                              
+                            </div>
+                        </div>
+                        <!--fine button-->
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+</div>
+
+
+
+
+
+<script type="text/javascript" >
+
+    function sendMessage(e) {
+
+        e.preventDefault();
+
+        axios.post("/api/messages", {
+            Name: document.querySelector("#name").value,
+            Email: document.querySelector("#email").value,
+            Title: document.querySelector("#title").value,
+            Text: document.querySelector("#text").value,
+        })
+        .then((response) => {
+
+            console.log("ok", response);
+            
+            document.querySelector("#name").value = "";
+            document.querySelector("#email").value = "";
+            document.querySelector("#title").value = "";
+            document.querySelector("#text").value = "";
+
+            alert("Messaggio inviato con successo");
+            document.querySelector('.registerDiv').innerHTML = "";
+            
+
+        }).catch(error => {
+            console.log(error);
+        });
+        
+    }
+
+    
+ 
+</script>
+
